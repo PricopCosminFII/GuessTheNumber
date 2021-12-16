@@ -11,6 +11,7 @@ sender = 0
 guesser = 0
 lock_for_number = threading.Lock()
 lock_for_answer = threading.Lock()
+lock_for_minim = threading.Lock()
 lock_guesser = threading.Lock()
 lock_sender = threading.Lock()
 
@@ -46,12 +47,14 @@ def multi_threaded_client(connection):
     global lock_for_answer
     global lock_guesser
     global lock_sender
+    global lock_for_minim
     if game_type == '1':
         minimum = sys.maxsize
         for i in range(3):
             number_of_tries = 0
             won_guesser = 0
             numb = get_random_number()
+            print('\n'+str(numb)+'\n')
             connection.sendall(str.encode(' <<<Guess The Number !' + 'Round ' + str(i + 1) + ' >>>\n'))
             while won_guesser == 0:
                 response = int(connection.recv(2048).decode('utf-8'))
@@ -107,7 +110,7 @@ def multi_threaded_client(connection):
                     connection.sendall(str.encode(result[0]))
                     won_guesser = result[1]
                     number_of_tries += 1
-                if number_of_tries <= minimum:
+                if number_of_tries < minimum:
                     minimum = number_of_tries
             elif game_role == '2':
                 while guesser == 0:
@@ -131,7 +134,6 @@ def multi_threaded_client(connection):
     sender = 0
     n = -1
     resp_sender = -1
-    minimum = sys.maxsize
 
 
 def main():
